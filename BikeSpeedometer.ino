@@ -20,7 +20,6 @@ Adafruit_SSD1306 display = Adafruit_SSD1306(128, 32, &WIRE);
 sensors_event_t event;
 
 void setup() {
-  // put your setup code here, to run once:
   Serial.begin(115200);
 
   mag.enableAutoRange(true);
@@ -47,7 +46,7 @@ void setup() {
 void stallUntilMagDrop(float mini, float diff){
   mag.getEvent(&event); 
   float bound = (mini + 3.f/5.f*diff);
-  while (bound < event.magnetic.z && event.magnetic.z != 0){
+  while (bound < event.magnetic.z && abs(event.magnetic.z) > 0.0001){
     mag.getEvent(&event);
     delay(25);
 }
@@ -76,10 +75,10 @@ void loop() {
   while (1000 > n) {
     mag.getEvent(&event);
  
-    if (mini > event.magnetic.z && event.magnetic.z != 0){
+    if (mini > event.magnetic.z && abs(event.magnetic.z) > 0.0001){
       mini = event.magnetic.z;
     }
-    else if (maxi < event.magnetic.z && event.magnetic.z != 0){
+    else if (maxi < event.magnetic.z && abs(event.magnetic.z) > 0.0001){
       maxi = event.magnetic.z;
     }
    
@@ -96,7 +95,7 @@ void loop() {
   stallUntilMagDrop(mini,diff);
   mag.getEvent(&event);
 
-  while ((mini + 4.f/5.f*diff) > event.magnetic.z && event.magnetic.z != 0){
+  while ((mini + 4.f/5.f*diff) > event.magnetic.z && abs(event.magnetic.z) > 0.0001){
     mag.getEvent(&event);
     delay(25);
   }
@@ -111,7 +110,7 @@ void loop() {
     /* 4/5s marker for the max magn */
     stallUntilMagDrop(mini, diff);
     mag.getEvent(&event);
-    while ((mini + 4.f/5.f*diff) > event.magnetic.z && event.magnetic.z != 0){
+    while ((mini + 4.f/5.f*diff) > event.magnetic.z && abs(event.magnetic.z) > 0.0001){
       mag.getEvent(&event);
       delay(25);
      }
